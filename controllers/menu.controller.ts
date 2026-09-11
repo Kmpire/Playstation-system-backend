@@ -186,6 +186,16 @@ export const saveAllCategories = async (req: Request, res: Response, next: NextF
   }
 };
 
+export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = String(req.params.id);
+    await db.delete(categories).where(eq(categories.id, id));
+    res.json({ success: true, message: `Category ${id} deleted` });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const resetCategories = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     await db.delete(categories);

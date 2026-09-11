@@ -8,6 +8,7 @@ import {
   getCategories,
   saveCategory,
   saveAllCategories,
+  deleteCategory,
   resetCategories,
 } from "../controllers/menu.controller.js";
 
@@ -26,5 +27,6 @@ router.get("/categories", getCategories);
 router.post("/categories", saveCategory);
 router.post("/categories/batch", saveAllCategories);
 router.post("/categories/reset", resetCategories);
+router.delete("/categories/:id", deleteCategory);
 
 export default router;

@@ -34,6 +34,13 @@ export const saveConsole = async (req: Request, res: Response, next: NextFunctio
 
     const [existing] = await db.select().from(consoles).where(eq(consoles.id, id));
     if (existing) {
+      const nextSession =
+        consoleData.status === "available" || consoleData.session === null
+          ? null
+          : consoleData.session !== undefined
+          ? consoleData.session
+          : existing.session;
+
       await db
         .update(consoles)
         .set({
@@ -41,7 +48,7 @@ export const saveConsole = async (req: Request, res: Response, next: NextFunctio
           type: consoleData.type,
           status: consoleData.status,
           dailyTotal: consoleData.dailyTotal ?? existing.dailyTotal,
-          session: consoleData.session !== undefined ? consoleData.session : existing.session,
+          session: nextSession,
           updatedAt: new Date(),
         })
         .where(eq(consoles.id, id));
@@ -52,7 +59,7 @@ export const saveConsole = async (req: Request, res: Response, next: NextFunctio
         type: consoleData.type,
         status: consoleData.status || "available",
         dailyTotal: consoleData.dailyTotal || 0,
-        session: consoleData.session || null,
+        session: consoleData.status === "available" ? null : consoleData.session || null,
       });
     }
 
@@ -74,6 +81,13 @@ export const saveAllConsoles = async (req: Request, res: Response, next: NextFun
     for (const item of items) {
       const id = Number(item.id);
       const [existing] = await db.select().from(consoles).where(eq(consoles.id, id));
+      const nextSession =
+        item.status === "available" || item.session === null
+          ? null
+          : item.session !== undefined
+          ? item.session
+          : existing?.session ?? null;
+
       if (existing) {
         await db
           .update(consoles)
@@ -82,7 +96,7 @@ export const saveAllConsoles = async (req: Request, res: Response, next: NextFun
             type: item.type,
             status: item.status,
             dailyTotal: item.dailyTotal ?? existing.dailyTotal,
-            session: item.session !== undefined ? item.session : existing.session,
+            session: nextSession,
             updatedAt: new Date(),
           })
           .where(eq(consoles.id, id));
@@ -93,7 +107,7 @@ export const saveAllConsoles = async (req: Request, res: Response, next: NextFun
           type: item.type,
           status: item.status || "available",
           dailyTotal: item.dailyTotal || 0,
-          session: item.session || null,
+          session: nextSession,
         });
       }
     }
