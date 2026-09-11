@@ -5,12 +5,14 @@ import {
   getAccounts,
   saveAccounts,
   resetAccounts,
+  changePassword,
 } from "../controllers/auth.controller.js";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router.post("/login", login);
+router.post("/change-password", changePassword);
 router.get("/me", authenticateToken, getCurrentUser);
 router.get("/accounts", getAccounts);
 router.post("/accounts", saveAccounts);

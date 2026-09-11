@@ -148,3 +148,38 @@ export const resetAccounts = async (_req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username, currentPassword, newPassword } = req.body;
+    if (!username || !newPassword) {
+      res.status(400).json({ success: false, message: "Username and new password are required" });
+      return;
+    }
+
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    if (!user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+
+    if (currentPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        res.status(400).json({ success: false, message: "Current password is incorrect" });
+        return;
+      }
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await db
+      .update(users)
+      .set({ password: hashedPassword, updatedAt: new Date() })
+      .where(eq(users.username, username));
+
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
