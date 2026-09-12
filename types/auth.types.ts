@@ -8,6 +8,7 @@ export interface UserPublicDto {
   username: string;
   name: string;
   role: string;
+  createdAt?: Date | string;
 }
 
 export interface LoginResponseDto {

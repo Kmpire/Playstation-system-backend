@@ -68,15 +68,35 @@ export const saveAllMaintenanceRecords = async (req: Request, res: Response, nex
   }
 };
 
+export const deleteController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await padCtrl.deleteController(req.params.id as string);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteMaintenanceRecord = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await padCtrl.deleteMaintenanceRecord(req.params.id as string);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Controllers
 router.get("/", getAllControllers);
 router.post("/", saveController);
 router.post("/batch", saveAllControllers);
 router.post("/reset", resetControllers);
+router.delete("/:id", deleteController);
 
 // Maintenance
 router.get("/maintenance", getMaintenanceRecords);
 router.post("/maintenance", addMaintenanceRecord);
 router.post("/maintenance/batch", saveAllMaintenanceRecords);
+router.delete("/maintenance/:id", deleteMaintenanceRecord);
 
 export default router;

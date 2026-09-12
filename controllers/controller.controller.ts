@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { Controller, Route, Tags, Get, Post, Body } from "tsoa";
+import { Controller, Route, Tags, Get, Post, Delete, Body, Path } from "tsoa";
 import { db } from "../database/db.js";
 import { controllers, maintenanceRecords } from "../database/schema.js";
 import { seedControllers, seedMaintenanceRecords } from "../database/seed.js";
@@ -10,6 +10,7 @@ import type {
   GamepadResponse,
   MaintenanceListResponse,
   MaintenanceResponse,
+  ControllerActionResponse,
 } from "../types/controller.types.js";
 
 @Route("api/v1/controllers")
@@ -23,7 +24,8 @@ export class GamepadController extends Controller {
 
   @Post("")
   public async saveController(@Body() item: GamepadDto): Promise<GamepadResponse> {
-    const [existing] = await db.select().from(controllers).where(eq(controllers.id, item.id));
+    const id = item.id || `ctrl_${Date.now()}`;
+    const [existing] = await db.select().from(controllers).where(eq(controllers.id, id));
 
     if (existing) {
       await db
@@ -34,17 +36,17 @@ export class GamepadController extends Controller {
           status: item.status,
           updatedAt: new Date(),
         })
-        .where(eq(controllers.id, item.id));
+        .where(eq(controllers.id, id));
     } else {
       await db.insert(controllers).values({
-        id: item.id,
+        id: id,
         number: item.number,
         assignedTo: item.assignedTo ?? null,
         status: item.status || "working",
       });
     }
 
-    const [updated] = await db.select().from(controllers).where(eq(controllers.id, item.id));
+    const [updated] = await db.select().from(controllers).where(eq(controllers.id, id));
     return { success: true, data: updated };
   }
 
@@ -75,8 +77,9 @@ export class GamepadController extends Controller {
 
   @Post("maintenance")
   public async addMaintenanceRecord(@Body() record: MaintenanceRecordDto): Promise<MaintenanceResponse> {
+    const recId = record.id || "mr_" + Date.now();
     await db.insert(maintenanceRecords).values({
-      id: record.id || "mr_" + Date.now(),
+      id: recId,
       date: record.date,
       targetType: record.targetType,
       targetId: record.targetId,
@@ -88,7 +91,7 @@ export class GamepadController extends Controller {
     const [inserted] = await db
       .select()
       .from(maintenanceRecords)
-      .where(eq(maintenanceRecords.id, record.id));
+      .where(eq(maintenanceRecords.id, recId));
     return { success: true, data: inserted };
   }
 
@@ -128,5 +131,17 @@ export class GamepadController extends Controller {
     }
     const all = await db.select().from(maintenanceRecords);
     return { success: true, data: all };
+  }
+
+  @Delete("{id}")
+  public async deleteController(@Path() id: string): Promise<ControllerActionResponse> {
+    await db.delete(controllers).where(eq(controllers.id, id));
+    return { success: true, message: `Controller #${id} deleted` };
+  }
+
+  @Delete("maintenance/{id}")
+  public async deleteMaintenanceRecord(@Path() id: string): Promise<ControllerActionResponse> {
+    await db.delete(maintenanceRecords).where(eq(maintenanceRecords.id, id));
+    return { success: true, message: `Maintenance record #${id} deleted` };
   }
 }

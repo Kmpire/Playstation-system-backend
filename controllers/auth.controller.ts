@@ -112,6 +112,7 @@ export class AuthController extends Controller {
         username: users.username,
         name: users.name,
         role: users.role,
+        createdAt: users.createdAt,
       })
       .from(users);
     return { success: true, data: allUsers };

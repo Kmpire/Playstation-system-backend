@@ -35,3 +35,8 @@ export interface MaintenanceResponse {
   success: boolean;
   data: MaintenanceRecordDto;
 }
+
+export interface ControllerActionResponse {
+  success: boolean;
+  message: string;
+}
