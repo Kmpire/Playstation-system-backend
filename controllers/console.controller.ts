@@ -13,6 +13,7 @@ import type {
   ConsoleResponse,
   ConsoleListResponse,
   ConsoleActionResponse,
+  SessionTabItemListResponse,
 } from "../types/console.types.js";
 
 async function getConsoleWithSession(consoleId: number): Promise<ConsoleDto | null> {
@@ -169,6 +170,12 @@ export class ConsoleController extends Controller {
   @Get("")
   public async getAllConsoles(): Promise<ConsoleListResponse> {
     const list = await getAllConsolesWithSessions();
+    return { success: true, data: list };
+  }
+
+  @Get("tabs/all")
+  public async getAllTabOrders(): Promise<SessionTabItemListResponse> {
+    const list = await db.select().from(sessionTabItems);
     return { success: true, data: list };
   }
 

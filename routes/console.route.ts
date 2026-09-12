@@ -50,6 +50,15 @@ export const deleteConsole = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+export const getAllTabOrders = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await consoleCtrl.getAllTabOrders();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const resetConsoles = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await consoleCtrl.resetConsoles();
@@ -60,6 +69,7 @@ export const resetConsoles = async (_req: Request, res: Response, next: NextFunc
 };
 
 router.get("/", getAllConsoles);
+router.get("/tabs/all", getAllTabOrders);
 router.post("/reset", resetConsoles);
 router.post("/batch", saveAllConsoles);
 router.get("/:id", getConsoleById);

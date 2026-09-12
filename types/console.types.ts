@@ -12,6 +12,22 @@ export interface TabItemDto {
   qty: number;
 }
 
+export interface SessionTabItemDto {
+  id: number;
+  sessionId: number;
+  itemId: string;
+  name: string;
+  nameAr?: string | null;
+  price: number;
+  qty: number;
+  createdAt: Date | string;
+}
+
+export interface SessionTabItemListResponse {
+  success: boolean;
+  data: SessionTabItemDto[];
+}
+
 export interface SessionDto {
   id?: number;
   mode: "prepaid" | "postpaid";

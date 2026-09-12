@@ -655,6 +655,77 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SessionTabItemDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"sessionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"itemId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string",
+						"nullable": true
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"qty": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
+					}
+				},
+				"required": [
+					"id",
+					"sessionId",
+					"itemId",
+					"name",
+					"price",
+					"qty",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SessionTabItemListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/SessionTabItemDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ConsoleResponse": {
 				"properties": {
 					"success": {
@@ -1948,6 +2019,28 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/consoles/tabs/all": {
+			"get": {
+				"operationId": "GetAllTabOrders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SessionTabItemListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/v1/consoles/{id}": {
