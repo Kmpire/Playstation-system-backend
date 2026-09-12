@@ -1,9 +1,12 @@
 import bcrypt from "bcryptjs";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db, checkDatabaseConnection } from "./db.js";
 import {
   users,
   consoles,
+  consoleSessions,
+  sessionPriceSegments,
+  sessionTabItems,
   categories,
   menuItems,
   pricingConfigs,
@@ -13,6 +16,7 @@ import {
   customers,
   auditEntries,
   companyInfo,
+  companySocials,
 } from "./schema.js";
 
 const now = Date.now();
@@ -99,52 +103,48 @@ export const seedConsoles = [
 export const seedCategories = [
   { id: "c1", name: "Hot Drinks", nameAr: "مشروبات ساخنة" },
   { id: "c2", name: "Cold Drinks", nameAr: "مشروبات باردة" },
-  { id: "c3", name: "Snacks", nameAr: "وجبات خفيفة" },
-  { id: "c4", name: "Meals", nameAr: "وجبات رئيسية" },
+  { id: "c3", name: "Snacks", nameAr: "سناكس ومقرمشات" },
+  { id: "c4", name: "Sandwiches", nameAr: "سندوتشات" },
 ];
 
 export const seedMenuItems = [
-  { id: "m1", name: "Pepsi", nameAr: "بيبسي", category: "c2", price: 2, costPrice: 0.8, stock: 48, lowStockThreshold: 10 },
-  { id: "m2", name: "Water", nameAr: "ماء", category: "c2", price: 1, costPrice: 0.3, stock: 60, lowStockThreshold: 15 },
-  { id: "m3", name: "Coffee", nameAr: "قهوة", category: "c1", price: 5, costPrice: 1.5, stock: 30, lowStockThreshold: 5 },
-  { id: "m4", name: "Tea", nameAr: "شاي", category: "c1", price: 3, costPrice: 0.8, stock: 40, lowStockThreshold: 5 },
-  { id: "m5", name: "Chips", nameAr: "رقائق", category: "c3", price: 3, costPrice: 1.2, stock: 35, lowStockThreshold: 8 },
-  { id: "m6", name: "Sandwich", nameAr: "ساندويتش", category: "c4", price: 8, costPrice: 3.5, stock: 12, lowStockThreshold: 5 },
-  { id: "m7", name: "Burger", nameAr: "برغر", category: "c4", price: 12, costPrice: 5, stock: 8, lowStockThreshold: 3 },
-  { id: "m8", name: "Energy Drink", nameAr: "مشروب طاقة", category: "c2", price: 6, costPrice: 2.5, stock: 4, lowStockThreshold: 5 },
-  { id: "m9", name: "Popcorn", nameAr: "فشار", category: "c3", price: 4, costPrice: 1, stock: 20, lowStockThreshold: 6 },
-  { id: "m10", name: "Lemonade", nameAr: "عصير ليمون", category: "c2", price: 4, costPrice: 1.2, stock: 3, lowStockThreshold: 5 },
+  { id: "m1", name: "Pepsi", nameAr: "بيبسي", category: "c2", price: 2.0, costPrice: 1.2, stock: 45, lowStockThreshold: 10 },
+  { id: "m2", name: "Red Bull", nameAr: "ريد بول", category: "c2", price: 4.5, costPrice: 3.0, stock: 18, lowStockThreshold: 5 },
+  { id: "m3", name: "Turkish Coffee", nameAr: "قهوة تركي", category: "c1", price: 3.0, costPrice: 0.8, stock: 80, lowStockThreshold: 15 },
+  { id: "m4", name: "Green Tea", nameAr: "شاي أخضر", category: "c1", price: 2.0, costPrice: 0.5, stock: 60, lowStockThreshold: 10 },
+  { id: "m5", name: "Doritos", nameAr: "دوريتوس", category: "c3", price: 2.5, costPrice: 1.5, stock: 30, lowStockThreshold: 8 },
+  { id: "m6", name: "KitKat", nameAr: "كيت كات", category: "c3", price: 2.0, costPrice: 1.2, stock: 25, lowStockThreshold: 5 },
+  { id: "m7", name: "Club Sandwich", nameAr: "كلوب ساندوتش", category: "c4", price: 6.5, costPrice: 3.5, stock: 12, lowStockThreshold: 4 },
+  { id: "m8", name: "Burger", nameAr: "برجر", category: "c4", price: 7.0, costPrice: 4.0, stock: 8, lowStockThreshold: 3 },
 ];
 
 export const seedPricing = [
-  { type: "PS4", singleRate: 3, multiRate: 4 },
-  { type: "PS5", singleRate: 4, multiRate: 5 },
+  { type: "PS5", singleRate: 4.0, multiRate: 5.5 },
+  { type: "PS4", singleRate: 3.0, multiRate: 4.0 },
   { type: "Xbox", singleRate: 3.5, multiRate: 4.5 },
-  { type: "VIP", singleRate: 8, multiRate: 10 },
+  { type: "VIP", singleRate: 7.0, multiRate: 9.0 },
 ];
 
 export const seedControllers = [
-  { id: "ctrl1", number: "C-001", assignedTo: 1, status: "working" },
-  { id: "ctrl2", number: "C-002", assignedTo: 1, status: "working" },
-  { id: "ctrl3", number: "C-003", assignedTo: 3, status: "repair" },
-  { id: "ctrl4", number: "C-004", assignedTo: null, status: "damaged" },
-  { id: "ctrl5", number: "C-005", assignedTo: 2, status: "working" },
-  { id: "ctrl6", number: "C-006", assignedTo: null, status: "retired" },
+  { id: "ctrl1", number: "1", assignedTo: 1, status: "working" },
+  { id: "ctrl2", number: "2", assignedTo: 1, status: "working" },
+  { id: "ctrl3", number: "3", assignedTo: 2, status: "working" },
+  { id: "ctrl4", number: "4", assignedTo: 3, status: "working" },
+  { id: "ctrl5", number: "5", assignedTo: null, status: "damaged" },
+  { id: "ctrl6", number: "6", assignedTo: null, status: "repair" },
 ];
 
 export const seedShiftReports = [
-  { id: "sr1", date: "2026-09-10", staff: "Admin", countedCash: 892.75, expectedCash: 895.5, variance: -2.75, notes: "Slight shortage, verified receipts." },
-  { id: "sr2", date: "2026-09-09", staff: "Cashier", countedCash: 1040, expectedCash: 1040, variance: 0, notes: "Balanced." },
-  { id: "sr3", date: "2026-09-08", staff: "Cashier", countedCash: 765.25, expectedCash: 760, variance: 5.25, notes: "Extra change from tips jar." },
-  { id: "sr4", date: "2026-09-07", staff: "Admin", countedCash: 980, expectedCash: 984.5, variance: -4.5, notes: "" },
+  { id: "sr1", date: "2026-09-10", staff: "Mohammed Saleh", countedCash: 420.0, expectedCash: 420.0, variance: 0, notes: "All matched" },
+  { id: "sr2", date: "2026-09-09", staff: "Ahmed Al-Rashidi", countedCash: 890.0, expectedCash: 892.75, variance: -2.75, notes: "Minor rounding" },
+  { id: "sr3", date: "2026-09-08", staff: "Mohammed Saleh", countedCash: 610.5, expectedCash: 610.5, variance: 0, notes: "Perfect handover" },
 ];
 
-export const seedMaintenanceRecords = [
-  { id: "mr1", date: "2026-09-08", targetType: "console", targetId: "6", targetLabel: "Xbox — 02", issue: "HDMI port damaged — replaced", cost: 45, resolvedBy: "Ahmed K." },
-  { id: "mr2", date: "2026-09-05", targetType: "controller", targetId: "ctrl4", targetLabel: "C-004", issue: "Analog stick drift — recalibrated", cost: 20, resolvedBy: "Ahmed K." },
-  { id: "mr3", date: "2026-09-01", targetType: "console", targetId: "4", targetLabel: "PS4 — 02", issue: "Overheating — thermal paste replaced", cost: 15, resolvedBy: "Mohammed S." },
-  { id: "mr4", date: "2026-08-28", targetType: "controller", targetId: "ctrl3", targetLabel: "C-003", issue: "USB cable fraying — replaced cable", cost: 8, resolvedBy: "Ahmed K." },
+export const seedMaintenance = [
+  { id: "mr1", date: "2026-09-08", targetType: "controller", targetId: "ctrl5", targetLabel: "DualSense #5", issue: "Left stick drift", cost: 15.0, resolvedBy: "TechFix Center" },
+  { id: "mr2", date: "2026-09-05", targetType: "console", targetId: "6", targetLabel: "Xbox — 02", issue: "HDMI port loose", cost: 35.0, resolvedBy: "GameConsole Repair" },
 ];
+export const seedMaintenanceRecords = seedMaintenance;
 
 export const seedCustomers = [
   { id: "cu1", name: "Khalid Al-Rashidi", phone: "+966 50 123 4567", balance: 0, creditLimit: 100, tabEnabled: false },
@@ -202,12 +202,55 @@ export async function autoSeedDatabase() {
       }
     }
 
-    // 2. Consoles
+    // 2. Consoles and relational sessions
     const [{ value: consoleCount }] = await db.select({ value: count() }).from(consoles);
     if (consoleCount === 0) {
-      console.log("🌱 Seeding consoles...");
+      console.log("🌱 Seeding consoles and relational sessions...");
       for (const con of seedConsoles) {
-        await db.insert(consoles).values(con);
+        await db.insert(consoles).values({
+          id: con.id,
+          name: con.name,
+          type: con.type,
+          status: con.status,
+          dailyTotal: con.dailyTotal,
+        });
+
+        if (con.session) {
+          const [insertedSession] = await db
+            .insert(consoleSessions)
+            .values({
+              consoleId: con.id,
+              mode: con.session.mode,
+              playerType: con.session.playerType,
+              startTime: con.session.startTime,
+              pausedAt: con.session.pausedAt,
+              totalPausedMs: con.session.totalPausedMs,
+              targetDurationMin: con.session.targetDurationMin ?? null,
+              isActive: true,
+            })
+            .returning();
+
+          if (insertedSession) {
+            for (const seg of con.session.priceSegments) {
+              await db.insert(sessionPriceSegments).values({
+                sessionId: insertedSession.id,
+                playerType: seg.playerType,
+                startElapsedMs: seg.startElapsedMs,
+                ratePerHour: seg.ratePerHour,
+              });
+            }
+
+            for (const tab of con.session.tab) {
+              await db.insert(sessionTabItems).values({
+                sessionId: insertedSession.id,
+                itemId: tab.id,
+                name: tab.name,
+                price: tab.price,
+                qty: tab.qty,
+              });
+            }
+          }
+        }
       }
     }
 
@@ -251,7 +294,7 @@ export async function autoSeedDatabase() {
     const [{ value: maintCount }] = await db.select({ value: count() }).from(maintenanceRecords);
     if (maintCount === 0) {
       console.log("🌱 Seeding maintenance records...");
-      for (const mr of seedMaintenanceRecords) {
+      for (const mr of seedMaintenance) {
         await db.insert(maintenanceRecords).values(mr);
       }
     }
@@ -269,8 +312,8 @@ export async function autoSeedDatabase() {
     const [{ value: custCount }] = await db.select({ value: count() }).from(customers);
     if (custCount === 0) {
       console.log("🌱 Seeding customers...");
-      for (const cust of seedCustomers) {
-        await db.insert(customers).values(cust);
+      for (const cu of seedCustomers) {
+        await db.insert(customers).values(cu);
       }
     }
 
@@ -283,11 +326,28 @@ export async function autoSeedDatabase() {
       }
     }
 
-    // 11. Company info
+    // 11. Company info and relational socials
     const [{ value: compCount }] = await db.select({ value: count() }).from(companyInfo);
     if (compCount === 0) {
-      console.log("🌱 Seeding company info...");
-      await db.insert(companyInfo).values(seedCompany);
+      console.log("🌱 Seeding company info and relational socials...");
+      await db.insert(companyInfo).values({
+        id: seedCompany.id,
+        name: seedCompany.name,
+        nameAr: seedCompany.nameAr,
+        phone: seedCompany.phone,
+        email: seedCompany.email,
+        address: seedCompany.address,
+        addressAr: seedCompany.addressAr,
+      });
+
+      for (const soc of seedCompany.socials) {
+        await db.insert(companySocials).values({
+          companyId: seedCompany.id,
+          label: soc.label,
+          icon: soc.icon,
+          handle: soc.handle,
+        });
+      }
     }
 
     console.log("✅ Database auto-seed check complete.");

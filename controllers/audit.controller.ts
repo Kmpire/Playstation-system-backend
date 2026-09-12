@@ -1,21 +1,25 @@
-import type { Request, Response, NextFunction } from "express";
 import { desc, eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Post, Body } from "tsoa";
 import { db } from "../database/db.js";
 import { auditEntries } from "../database/schema.js";
 import { seedAuditLog } from "../database/seed.js";
+import type {
+  AuditEntryDto,
+  AuditListResponse,
+  AuditActionResponse,
+} from "../types/audit.types.js";
 
-export const getLogs = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+@Route("api/v1/audit")
+@Tags("Audit")
+export class AuditController extends Controller {
+  @Get("")
+  public async getLogs(): Promise<AuditListResponse> {
     const list = await db.select().from(auditEntries).orderBy(desc(auditEntries.timestamp));
-    res.json({ success: true, data: list });
-  } catch (error) {
-    next(error);
+    return { success: true, data: list };
   }
-};
 
-export const addLog = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = req.body;
+  @Post("")
+  public async addLog(@Body() item: AuditEntryDto): Promise<AuditActionResponse> {
     await db.insert(auditEntries).values({
       id: item.id || "a_" + Date.now(),
       timestamp: item.timestamp || new Date().toISOString().replace("T", " ").slice(0, 19),
@@ -23,20 +27,11 @@ export const addLog = async (req: Request, res: Response, next: NextFunction) =>
       actionType: item.actionType,
       details: item.details,
     });
-    res.json({ success: true, message: "Audit entry added" });
-  } catch (error) {
-    next(error);
+    return { success: true, message: "Audit entry added" };
   }
-};
 
-export const saveAllLogs = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const list = req.body;
-    if (!Array.isArray(list)) {
-      res.status(400).json({ success: false, message: "Expected array of audit entries" });
-      return;
-    }
-
+  @Post("batch")
+  public async saveAllLogs(@Body() list: AuditEntryDto[]): Promise<AuditActionResponse> {
     for (const item of list) {
       const [existing] = await db
         .select()
@@ -63,23 +58,15 @@ export const saveAllLogs = async (req: Request, res: Response, next: NextFunctio
         });
       }
     }
-
-    const all = await db.select().from(auditEntries).orderBy(desc(auditEntries.timestamp));
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, message: "Audit entries saved" };
   }
-};
 
-export const resetLogs = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+  @Post("reset")
+  public async resetLogs(): Promise<AuditActionResponse> {
     await db.delete(auditEntries);
     for (const a of seedAuditLog) {
       await db.insert(auditEntries).values(a);
     }
-    const all = await db.select().from(auditEntries).orderBy(desc(auditEntries.timestamp));
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, message: "Audit logs reset to seed" };
   }
-};
+}

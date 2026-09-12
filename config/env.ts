@@ -11,3 +11,5 @@ export const DATABASE_URL = process.env.DATABASE_URL || "";
 export const JWT_SECRET = process.env.JWT_SECRET || "default_jwt_secret_change_in_production";
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "*";
+export const API_URL = process.env.API_URL || "";
+export const API_DESCRIPTION = process.env.API_DESCRIPTION || "";

@@ -1,44 +1,39 @@
-import type { Request, Response, NextFunction } from "express";
 import { desc, eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Post, Body } from "tsoa";
 import { db } from "../database/db.js";
 import { shiftReports } from "../database/schema.js";
 import { seedShiftReports } from "../database/seed.js";
+import type {
+  ShiftReportDto,
+  ShiftListResponse,
+  ShiftActionResponse,
+} from "../types/shift.types.js";
 
-export const getShiftReports = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+@Route("api/v1/shifts")
+@Tags("Shifts")
+export class ShiftController extends Controller {
+  @Get("")
+  public async getShiftReports(): Promise<ShiftListResponse> {
     const list = await db.select().from(shiftReports).orderBy(desc(shiftReports.date));
-    res.json({ success: true, data: list });
-  } catch (error) {
-    next(error);
+    return { success: true, data: list as ShiftReportDto[] };
   }
-};
 
-export const addShiftReport = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = req.body;
+  @Post("")
+  public async addShiftReport(@Body() body: ShiftReportDto): Promise<ShiftActionResponse> {
     await db.insert(shiftReports).values({
-      id: item.id || "sr_" + Date.now(),
-      date: item.date,
-      staff: item.staff,
-      countedCash: item.countedCash,
-      expectedCash: item.expectedCash,
-      variance: item.variance,
-      notes: item.notes || "",
+      id: body.id || "sr_" + Date.now(),
+      date: body.date,
+      staff: body.staff,
+      countedCash: body.countedCash,
+      expectedCash: body.expectedCash,
+      variance: body.variance,
+      notes: body.notes || "",
     });
-    res.json({ success: true, message: "Shift report added" });
-  } catch (error) {
-    next(error);
+    return { success: true, message: "Shift report added" };
   }
-};
 
-export const saveAllShiftReports = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const list = req.body;
-    if (!Array.isArray(list)) {
-      res.status(400).json({ success: false, message: "Expected array of shift reports" });
-      return;
-    }
-
+  @Post("batch")
+  public async saveAllShiftReports(@Body() list: ShiftReportDto[]): Promise<ShiftListResponse> {
     for (const item of list) {
       const [existing] = await db
         .select()
@@ -71,21 +66,16 @@ export const saveAllShiftReports = async (req: Request, res: Response, next: Nex
     }
 
     const all = await db.select().from(shiftReports).orderBy(desc(shiftReports.date));
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, data: all as ShiftReportDto[] };
   }
-};
 
-export const resetShiftReports = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+  @Post("reset")
+  public async resetShiftReports(): Promise<ShiftListResponse> {
     await db.delete(shiftReports);
     for (const sr of seedShiftReports) {
       await db.insert(shiftReports).values(sr);
     }
     const all = await db.select().from(shiftReports).orderBy(desc(shiftReports.date));
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, data: all as ShiftReportDto[] };
   }
-};
+}

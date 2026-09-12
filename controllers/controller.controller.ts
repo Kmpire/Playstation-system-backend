@@ -1,22 +1,28 @@
-import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Post, Body } from "tsoa";
 import { db } from "../database/db.js";
 import { controllers, maintenanceRecords } from "../database/schema.js";
 import { seedControllers, seedMaintenanceRecords } from "../database/seed.js";
+import type {
+  GamepadDto,
+  MaintenanceRecordDto,
+  GamepadListResponse,
+  GamepadResponse,
+  MaintenanceListResponse,
+  MaintenanceResponse,
+} from "../types/controller.types.js";
 
-// --- Controllers ---
-export const getAllControllers = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+@Route("api/v1/controllers")
+@Tags("Controllers")
+export class GamepadController extends Controller {
+  @Get("")
+  public async getAllControllers(): Promise<GamepadListResponse> {
     const list = await db.select().from(controllers);
-    res.json({ success: true, data: list });
-  } catch (error) {
-    next(error);
+    return { success: true, data: list };
   }
-};
 
-export const saveController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = req.body;
+  @Post("")
+  public async saveController(@Body() item: GamepadDto): Promise<GamepadResponse> {
     const [existing] = await db.select().from(controllers).where(eq(controllers.id, item.id));
 
     if (existing) {
@@ -39,135 +45,88 @@ export const saveController = async (req: Request, res: Response, next: NextFunc
     }
 
     const [updated] = await db.select().from(controllers).where(eq(controllers.id, item.id));
-    res.json({ success: true, data: updated });
-  } catch (error) {
-    next(error);
+    return { success: true, data: updated };
   }
-};
 
-export const saveAllControllers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const list = req.body;
-    if (!Array.isArray(list)) {
-      res.status(400).json({ success: false, message: "Expected array of controllers" });
-      return;
-    }
-
+  @Post("batch")
+  public async saveAllControllers(@Body() list: GamepadDto[]): Promise<GamepadListResponse> {
     for (const item of list) {
-      const [existing] = await db.select().from(controllers).where(eq(controllers.id, item.id));
-      if (existing) {
-        await db
-          .update(controllers)
-          .set({
-            number: item.number,
-            assignedTo: item.assignedTo,
-            status: item.status,
-            updatedAt: new Date(),
-          })
-          .where(eq(controllers.id, item.id));
-      } else {
-        await db.insert(controllers).values({
-          id: item.id,
-          number: item.number,
-          assignedTo: item.assignedTo ?? null,
-          status: item.status || "working",
-        });
-      }
+      await this.saveController(item);
     }
-
     const all = await db.select().from(controllers);
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, data: all };
   }
-};
 
-export const resetControllers = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+  @Post("reset")
+  public async resetControllers(): Promise<GamepadListResponse> {
     await db.delete(controllers);
     for (const c of seedControllers) {
       await db.insert(controllers).values(c);
     }
     const all = await db.select().from(controllers);
-    res.json({ success: true, data: all });
-  } catch (error) {
-    next(error);
+    return { success: true, data: all };
   }
-};
 
-// --- Maintenance Records ---
-export const getMaintenanceRecords = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const records = await db.select().from(maintenanceRecords);
-    res.json({ success: true, data: records });
-  } catch (error) {
-    next(error);
+  @Get("maintenance")
+  public async getMaintenanceRecords(): Promise<MaintenanceListResponse> {
+    const list = await db.select().from(maintenanceRecords);
+    return { success: true, data: list };
   }
-};
 
-export const addMaintenanceRecord = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const item = req.body;
+  @Post("maintenance")
+  public async addMaintenanceRecord(@Body() record: MaintenanceRecordDto): Promise<MaintenanceResponse> {
     await db.insert(maintenanceRecords).values({
-      id: item.id || "mr_" + Date.now(),
-      date: item.date,
-      targetType: item.targetType,
-      targetId: String(item.targetId),
-      targetLabel: item.targetLabel,
-      issue: item.issue,
-      cost: item.cost || 0,
-      resolvedBy: item.resolvedBy,
+      id: record.id || "mr_" + Date.now(),
+      date: record.date,
+      targetType: record.targetType,
+      targetId: record.targetId,
+      targetLabel: record.targetLabel,
+      issue: record.issue,
+      cost: record.cost || 0,
+      resolvedBy: record.resolvedBy,
     });
-    res.json({ success: true, message: "Maintenance record added" });
-  } catch (error) {
-    next(error);
+    const [inserted] = await db
+      .select()
+      .from(maintenanceRecords)
+      .where(eq(maintenanceRecords.id, record.id));
+    return { success: true, data: inserted };
   }
-};
 
-export const saveAllMaintenanceRecords = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const list = req.body;
-    if (!Array.isArray(list)) {
-      res.status(400).json({ success: false, message: "Expected array of maintenance records" });
-      return;
-    }
-
-    for (const item of list) {
+  @Post("maintenance/batch")
+  public async saveAllMaintenanceRecords(@Body() list: MaintenanceRecordDto[]): Promise<MaintenanceListResponse> {
+    for (const record of list) {
       const [existing] = await db
         .select()
         .from(maintenanceRecords)
-        .where(eq(maintenanceRecords.id, item.id));
+        .where(eq(maintenanceRecords.id, record.id));
 
       if (existing) {
         await db
           .update(maintenanceRecords)
           .set({
-            date: item.date,
-            targetType: item.targetType,
-            targetId: String(item.targetId),
-            targetLabel: item.targetLabel,
-            issue: item.issue,
-            cost: item.cost || 0,
-            resolvedBy: item.resolvedBy,
+            date: record.date,
+            targetType: record.targetType,
+            targetId: record.targetId,
+            targetLabel: record.targetLabel,
+            issue: record.issue,
+            cost: record.cost,
+            resolvedBy: record.resolvedBy,
           })
-          .where(eq(maintenanceRecords.id, item.id));
+          .where(eq(maintenanceRecords.id, record.id));
       } else {
         await db.insert(maintenanceRecords).values({
-          id: item.id || "mr_" + Date.now(),
-          date: item.date,
-          targetType: item.targetType,
-          targetId: String(item.targetId),
-          targetLabel: item.targetLabel,
-          issue: item.issue,
-          cost: item.cost || 0,
-          resolvedBy: item.resolvedBy,
+          id: record.id || "mr_" + Date.now(),
+          date: record.date,
+          targetType: record.targetType,
+          targetId: record.targetId,
+          targetLabel: record.targetLabel,
+          issue: record.issue,
+          cost: record.cost || 0,
+          resolvedBy: record.resolvedBy,
         });
       }
     }
-
-    const records = await db.select().from(maintenanceRecords);
-    res.json({ success: true, data: records });
-  } catch (error) {
-    next(error);
+    const all = await db.select().from(maintenanceRecords);
+    return { success: true, data: all };
   }
-};
+}

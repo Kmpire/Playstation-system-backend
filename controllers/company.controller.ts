@@ -1,26 +1,45 @@
-import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Put, Post, Body } from "tsoa";
 import { db } from "../database/db.js";
-import { companyInfo } from "../database/schema.js";
+import { companyInfo, companySocials } from "../database/schema.js";
 import { seedCompany } from "../database/seed.js";
+import type {
+  CompanyInfoDto,
+  CompanyResponse,
+} from "../types/company.types.js";
 
-export const getCompanyInfo = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const [info] = await db.select().from(companyInfo).where(eq(companyInfo.id, 1));
-    if (!info) {
-      // Return default seed if not populated yet
-      res.json({ success: true, data: seedCompany });
-      return;
-    }
-    res.json({ success: true, data: info });
-  } catch (error) {
-    next(error);
+async function getFullCompanyInfo(): Promise<CompanyInfoDto> {
+  const [info] = await db.select().from(companyInfo).where(eq(companyInfo.id, 1));
+  if (!info) {
+    return seedCompany;
   }
-};
 
-export const updateCompanyInfo = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const info = req.body;
+  const socials = await db
+    .select({
+      label: companySocials.label,
+      icon: companySocials.icon,
+      handle: companySocials.handle,
+    })
+    .from(companySocials)
+    .where(eq(companySocials.companyId, 1));
+
+  return {
+    ...info,
+    socials,
+  };
+}
+
+@Route("api/v1/company")
+@Tags("Company")
+export class CompanyController extends Controller {
+  @Get("")
+  public async getCompanyInfo(): Promise<CompanyResponse> {
+    const data = await getFullCompanyInfo();
+    return { success: true, data };
+  }
+
+  @Put("")
+  public async updateCompanyInfo(@Body() info: CompanyInfoDto): Promise<CompanyResponse> {
     const [existing] = await db.select().from(companyInfo).where(eq(companyInfo.id, 1));
 
     if (existing) {
@@ -33,7 +52,6 @@ export const updateCompanyInfo = async (req: Request, res: Response, next: NextF
           email: info.email ?? existing.email,
           address: info.address ?? existing.address,
           addressAr: info.addressAr ?? existing.addressAr,
-          socials: info.socials ?? existing.socials,
           updatedAt: new Date(),
         })
         .where(eq(companyInfo.id, 1));
@@ -46,13 +64,27 @@ export const updateCompanyInfo = async (req: Request, res: Response, next: NextF
         email: info.email,
         address: info.address,
         addressAr: info.addressAr,
-        socials: info.socials || seedCompany.socials,
       });
     }
 
-    const [updated] = await db.select().from(companyInfo).where(eq(companyInfo.id, 1));
-    res.json({ success: true, data: updated });
-  } catch (error) {
-    next(error);
+    if (Array.isArray(info.socials)) {
+      await db.delete(companySocials).where(eq(companySocials.companyId, 1));
+      for (const soc of info.socials) {
+        await db.insert(companySocials).values({
+          companyId: 1,
+          label: String(soc.label),
+          icon: String(soc.icon),
+          handle: String(soc.handle),
+        });
+      }
+    }
+
+    const data = await getFullCompanyInfo();
+    return { success: true, data };
   }
-};
+
+  @Post("")
+  public async saveCompanyInfo(@Body() info: CompanyInfoDto): Promise<CompanyResponse> {
+    return this.updateCompanyInfo(info);
+  }
+}

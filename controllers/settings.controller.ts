@@ -1,35 +1,40 @@
-import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Post, Put, Body, Path } from "tsoa";
 import { db } from "../database/db.js";
 import { appSettings } from "../database/schema.js";
+import type {
+  SettingValueDto,
+  SettingResponse,
+  SettingActionResponse,
+} from "../types/settings.types.js";
 
-export const getSetting = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const key = String(req.params.key);
+@Route("api/v1/settings")
+@Tags("Settings")
+export class SettingsController extends Controller {
+  @Get("{key}")
+  public async getSetting(@Path() key: string): Promise<SettingResponse> {
     const [setting] = await db.select().from(appSettings).where(eq(appSettings.key, key));
-    res.json({ success: true, value: setting ? setting.value : null });
-  } catch (error) {
-    next(error);
+    return { success: true, value: setting ? setting.value : null };
   }
-};
 
-export const setSetting = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const key = String(req.params.key);
-    const { value } = req.body;
+  @Post("{key}")
+  public async setSetting(@Path() key: string, @Body() body: SettingValueDto): Promise<SettingActionResponse> {
     const [existing] = await db.select().from(appSettings).where(eq(appSettings.key, key));
 
     if (existing) {
       await db
         .update(appSettings)
-        .set({ value: String(value), updatedAt: new Date() })
+        .set({ value: String(body.value), updatedAt: new Date() })
         .where(eq(appSettings.key, key));
     } else {
-      await db.insert(appSettings).values({ key, value: String(value) });
+      await db.insert(appSettings).values({ key, value: String(body.value) });
     }
 
-    res.json({ success: true, message: `Setting '${key}' saved` });
-  } catch (error) {
-    next(error);
+    return { success: true, message: `Setting '${key}' saved` };
   }
-};
+
+  @Put("{key}")
+  public async updateSetting(@Path() key: string, @Body() body: SettingValueDto): Promise<SettingActionResponse> {
+    return this.setSetting(key, body);
+  }
+}

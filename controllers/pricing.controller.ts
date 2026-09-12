@@ -1,26 +1,24 @@
-import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
+import { Controller, Route, Tags, Get, Post, Body } from "tsoa";
 import { db } from "../database/db.js";
 import { pricingConfigs } from "../database/schema.js";
 import { seedPricing } from "../database/seed.js";
+import type {
+  PricingConfigDto,
+  PricingListResponse,
+} from "../types/pricing.types.js";
 
-export const getAllPricing = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+@Route("api/v1/pricing")
+@Tags("Pricing")
+export class PricingController extends Controller {
+  @Get("")
+  public async getAllPricing(): Promise<PricingListResponse> {
     const list = await db.select().from(pricingConfigs);
-    res.json({ success: true, data: list });
-  } catch (error) {
-    next(error);
+    return { success: true, data: list };
   }
-};
 
-export const saveAllPricing = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const configs = req.body;
-    if (!Array.isArray(configs)) {
-      res.status(400).json({ success: false, message: "Expected array of pricing configs" });
-      return;
-    }
-
+  @Post("")
+  public async saveAllPricing(@Body() configs: PricingConfigDto[]): Promise<PricingListResponse> {
     for (const item of configs) {
       const [existing] = await db
         .select()
@@ -46,21 +44,16 @@ export const saveAllPricing = async (req: Request, res: Response, next: NextFunc
     }
 
     const updated = await db.select().from(pricingConfigs);
-    res.json({ success: true, data: updated });
-  } catch (error) {
-    next(error);
+    return { success: true, data: updated };
   }
-};
 
-export const resetPricing = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
+  @Post("reset")
+  public async resetPricing(): Promise<PricingListResponse> {
     await db.delete(pricingConfigs);
     for (const p of seedPricing) {
       await db.insert(pricingConfigs).values(p);
     }
-    const list = await db.select().from(pricingConfigs);
-    res.json({ success: true, data: list });
-  } catch (error) {
-    next(error);
+    const updated = await db.select().from(pricingConfigs);
+    return { success: true, data: updated };
   }
-};
+}

@@ -1,0 +1,14 @@
+{
+  "entryFile": "server.ts",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "controllerPathGlobs": ["controllers/**/*.controller.ts"],
+  "spec": {
+    "outputDirectory": "docs",
+    "specVersion": 3,
+    "info": {
+      "title": "Playstation System API",
+      "version": "1.0.0",
+      "description": "API Documentation auto-generated via tsoa like Spring Boot"
+    }
+  }
+}

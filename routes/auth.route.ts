@@ -1,15 +1,83 @@
 import { Router } from "express";
-import {
-  login,
-  getCurrentUser,
-  getAccounts,
-  saveAccounts,
-  resetAccounts,
-  changePassword,
-} from "../controllers/auth.controller.js";
+import type { Request, Response, NextFunction } from "express";
+import { AuthController } from "../controllers/auth.controller.js";
 import { authenticateToken } from "../middlewares/auth.middleware.js";
+import { db } from "../database/db.js";
+import { users } from "../database/schema.js";
+import { eq } from "drizzle-orm";
 
 const router = Router();
+const authCtrl = new AuthController();
+
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authCtrl.login(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
+    }
+    const [user] = await db.select().from(users).where(eq(users.id, req.user.id));
+    if (!user) {
+      res.status(404).json({ success: false, message: "User not found" });
+      return;
+    }
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAccounts = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authCtrl.getAccounts();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const saveAccounts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authCtrl.saveAccounts(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetAccounts = async (_req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authCtrl.resetAccounts();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await authCtrl.changePassword(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
 
 router.post("/login", login);
 router.post("/change-password", changePassword);

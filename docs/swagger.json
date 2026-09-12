@@ -1,0 +1,2384 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"HealthResponse": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"service": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status",
+					"service",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ShiftReportDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"staff": {
+						"type": "string"
+					},
+					"countedCash": {
+						"type": "number",
+						"format": "double"
+					},
+					"expectedCash": {
+						"type": "number",
+						"format": "double"
+					},
+					"variance": {
+						"type": "number",
+						"format": "double"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"date",
+					"staff",
+					"countedCash",
+					"expectedCash",
+					"variance"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ShiftListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/ShiftReportDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ShiftActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SettingResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"value": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"success",
+					"value"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SettingActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SettingValueDto": {
+				"properties": {
+					"value": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"value"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PricingConfigDto": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"singleRate": {
+						"type": "number",
+						"format": "double"
+					},
+					"multiRate": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"singleRate",
+					"multiRate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PricingListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/PricingConfigDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MenuItemDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"costPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"stock": {
+						"type": "number",
+						"format": "double"
+					},
+					"lowStockThreshold": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"nameAr",
+					"category",
+					"price"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MenuItemListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/MenuItemDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MenuItemResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/MenuItemDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MenuActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CategoryDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"nameAr"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CategoryListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/CategoryDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CategoryResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/CategoryDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GamepadDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"number": {
+						"type": "string"
+					},
+					"assignedTo": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"status": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"number",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GamepadListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/GamepadDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GamepadResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/GamepadDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MaintenanceRecordDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"targetType": {
+						"type": "string"
+					},
+					"targetId": {
+						"type": "string"
+					},
+					"targetLabel": {
+						"type": "string"
+					},
+					"issue": {
+						"type": "string"
+					},
+					"cost": {
+						"type": "number",
+						"format": "double"
+					},
+					"resolvedBy": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"date",
+					"targetType",
+					"targetId",
+					"targetLabel",
+					"issue",
+					"cost",
+					"resolvedBy"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MaintenanceListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/MaintenanceRecordDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MaintenanceResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/MaintenanceRecordDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PriceSegmentDto": {
+				"properties": {
+					"playerType": {
+						"type": "string"
+					},
+					"startElapsedMs": {
+						"type": "number",
+						"format": "double"
+					},
+					"ratePerHour": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"playerType",
+					"startElapsedMs",
+					"ratePerHour"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TabItemDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"qty": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"price",
+					"qty"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SessionDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"mode": {
+						"type": "string",
+						"enum": [
+							"prepaid",
+							"postpaid"
+						]
+					},
+					"playerType": {
+						"type": "string",
+						"enum": [
+							"single",
+							"multi"
+						]
+					},
+					"startTime": {
+						"type": "number",
+						"format": "double"
+					},
+					"pausedAt": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"totalPausedMs": {
+						"type": "number",
+						"format": "double"
+					},
+					"targetDurationMin": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"priceSegments": {
+						"items": {
+							"$ref": "#/components/schemas/PriceSegmentDto"
+						},
+						"type": "array"
+					},
+					"tab": {
+						"items": {
+							"$ref": "#/components/schemas/TabItemDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"mode",
+					"playerType",
+					"startTime",
+					"totalPausedMs",
+					"priceSegments",
+					"tab"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsoleDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"dailyTotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"session": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/SessionDto"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"type",
+					"status",
+					"dailyTotal"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsoleListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/ConsoleDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsoleResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/ConsoleDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsoleActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CompanySocialDto": {
+				"properties": {
+					"label": {
+						"type": "string"
+					},
+					"icon": {
+						"type": "string"
+					},
+					"handle": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"label",
+					"icon",
+					"handle"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CompanyInfoDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
+						"type": "string",
+						"nullable": true
+					},
+					"address": {
+						"type": "string",
+						"nullable": true
+					},
+					"addressAr": {
+						"type": "string",
+						"nullable": true
+					},
+					"socials": {
+						"items": {
+							"$ref": "#/components/schemas/CompanySocialDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"nameAr"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CompanyResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/CompanyInfoDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserPublicDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"name",
+					"role"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginResponseDto": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"token": {
+						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/UserPublicDto"
+					}
+				},
+				"required": [
+					"success",
+					"token",
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginRequestDto": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChangePasswordDto": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"currentPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CurrentUserResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"user": {
+						"$ref": "#/components/schemas/UserPublicDto"
+					}
+				},
+				"required": [
+					"success",
+					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/UserPublicDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AccountDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuditEntryDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"staff": {
+						"type": "string"
+					},
+					"actionType": {
+						"type": "string"
+					},
+					"details": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"timestamp",
+					"staff",
+					"actionType",
+					"details"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuditListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/AuditEntryDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuditActionResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "playstation-system-backend",
+		"version": "1.0.0",
+		"contact": {}
+	},
+	"paths": {
+		"/api/v1/health": {
+			"get": {
+				"operationId": "GetHealth",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HealthResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"System"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/shifts": {
+			"get": {
+				"operationId": "GetShiftReports",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShiftListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Shifts"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "AddShiftReport",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShiftActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Shifts"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ShiftReportDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/shifts/batch": {
+			"post": {
+				"operationId": "SaveAllShiftReports",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShiftListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Shifts"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/ShiftReportDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/shifts/reset": {
+			"post": {
+				"operationId": "ResetShiftReports",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ShiftListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Shifts"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/settings/{key}": {
+			"get": {
+				"operationId": "GetSetting",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Settings"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SetSetting",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Settings"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SettingValueDto"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateSetting",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Settings"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SettingValueDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/pricing": {
+			"get": {
+				"operationId": "GetAllPricing",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PricingListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pricing"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveAllPricing",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PricingListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pricing"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/PricingConfigDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/pricing/reset": {
+			"post": {
+				"operationId": "ResetPricing",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PricingListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Pricing"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/menu/items": {
+			"get": {
+				"operationId": "GetItems",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuItemListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveItem",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuItemResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MenuItemDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/menu/items/{id}": {
+			"put": {
+				"operationId": "UpdateItem",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuItemResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MenuItemDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteItem",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/menu/items/batch": {
+			"post": {
+				"operationId": "SaveAllItems",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuItemListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/MenuItemDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/menu/items/reset": {
+			"post": {
+				"operationId": "ResetItems",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuItemListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/menu/categories": {
+			"get": {
+				"operationId": "GetCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CategoryListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Categories"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CategoryResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Categories"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CategoryDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/menu/categories/batch": {
+			"post": {
+				"operationId": "SaveAllCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CategoryListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Categories"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/CategoryDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/menu/categories/reset": {
+			"post": {
+				"operationId": "ResetCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CategoryListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Categories"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/menu/categories/{id}": {
+			"delete": {
+				"operationId": "DeleteCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Categories"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/controllers": {
+			"get": {
+				"operationId": "GetAllControllers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GamepadListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveController",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GamepadResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GamepadDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/controllers/batch": {
+			"post": {
+				"operationId": "SaveAllControllers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GamepadListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/GamepadDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/controllers/reset": {
+			"post": {
+				"operationId": "ResetControllers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GamepadListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/controllers/maintenance": {
+			"get": {
+				"operationId": "GetMaintenanceRecords",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MaintenanceListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "AddMaintenanceRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MaintenanceResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MaintenanceRecordDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/controllers/maintenance/batch": {
+			"post": {
+				"operationId": "SaveAllMaintenanceRecords",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MaintenanceListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Controllers"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/MaintenanceRecordDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/consoles": {
+			"get": {
+				"operationId": "GetAllConsoles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveConsole",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ConsoleDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/consoles/{id}": {
+			"get": {
+				"operationId": "GetConsoleById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateConsole",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ConsoleDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteConsole",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/consoles/batch": {
+			"post": {
+				"operationId": "SaveAllConsoles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/ConsoleDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/consoles/reset": {
+			"post": {
+				"operationId": "ResetConsoles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/company": {
+			"get": {
+				"operationId": "GetCompanyInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Company"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "UpdateCompanyInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Company"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CompanyInfoDto"
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "SaveCompanyInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CompanyResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Company"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CompanyInfoDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginResponseDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequestDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/auth/change-password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePasswordDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/auth/me": {
+			"get": {
+				"operationId": "GetCurrentUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CurrentUserResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/api/v1/auth/accounts": {
+			"get": {
+				"operationId": "GetAccounts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "SaveAccounts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/AccountDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/auth/accounts/reset": {
+			"post": {
+				"operationId": "ResetAccounts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/audit": {
+			"get": {
+				"operationId": "GetLogs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuditListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Audit"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "AddLog",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuditActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Audit"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AuditEntryDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/audit/batch": {
+			"post": {
+				"operationId": "SaveAllLogs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuditActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Audit"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/AuditEntryDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/audit/reset": {
+			"post": {
+				"operationId": "ResetLogs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuditActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Audit"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
