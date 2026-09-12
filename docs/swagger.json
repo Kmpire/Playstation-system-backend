@@ -499,6 +499,9 @@
 					"name": {
 						"type": "string"
 					},
+					"nameAr": {
+						"type": "string"
+					},
 					"price": {
 						"type": "number",
 						"format": "double"

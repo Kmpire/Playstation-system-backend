@@ -68,6 +68,7 @@ export const sessionTabItems = pgTable("session_tab_items", {
     .references(() => consoleSessions.id, { onDelete: "cascade" }),
   itemId: varchar("item_id", { length: 50 }).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
+  nameAr: varchar("name_ar", { length: 100 }),
   price: doublePrecision("price").notNull(),
   qty: integer("qty").notNull().default(1),
   createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -7,6 +7,7 @@ export interface PriceSegmentDto {
 export interface TabItemDto {
   id: string;
   name: string;
+  nameAr?: string;
   price: number;
   qty: number;
 }

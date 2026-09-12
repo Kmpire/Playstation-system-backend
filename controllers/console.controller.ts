@@ -56,6 +56,7 @@ async function getConsoleWithSession(consoleId: number): Promise<ConsoleDto | nu
       tab: tab.map((t) => ({
         id: t.itemId,
         name: t.name,
+        nameAr: t.nameAr || undefined,
         price: t.price,
         qty: t.qty,
       })),
@@ -91,6 +92,7 @@ async function getAllConsolesWithSessions(): Promise<ConsoleDto[]> {
       .map((t) => ({
         id: t.itemId,
         name: t.name,
+        nameAr: t.nameAr || undefined,
         price: t.price,
         qty: t.qty,
       }));
@@ -152,6 +154,7 @@ async function persistSessionData(consoleId: number, sessionData: any) {
           sessionId: newSession.id,
           itemId: String(tab.id),
           name: String(tab.name),
+          nameAr: tab.nameAr ? String(tab.nameAr) : null,
           price: Number(tab.price) || 0,
           qty: Number(tab.qty) || 1,
         });
