@@ -71,14 +71,13 @@ if (isDevelopment) {
     }),
   );
 } else {
-  app.get(DOCS_PATH, (_req, res) => {
-    return res.redirect(`${DOCS_PATH}/`);
-  });
-
-  app.get(`${DOCS_PATH}/`, (_req, res) => {
+  const serveDocsHtml = (_req: express.Request, res: express.Response) => {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     return res.send(renderSwaggerUiPage(DOCS_SPEC_PATH));
-  });
+  };
+
+  app.get(DOCS_PATH, serveDocsHtml);
+  app.get(`${DOCS_PATH}/`, serveDocsHtml);
 }
 
 // Routes
