@@ -726,6 +726,99 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ConsoleSessionDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"consoleId": {
+						"type": "number",
+						"format": "double"
+					},
+					"mode": {
+						"type": "string"
+					},
+					"playerType": {
+						"type": "string"
+					},
+					"startTime": {
+						"type": "number",
+						"format": "double"
+					},
+					"pausedAt": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"totalPausedMs": {
+						"type": "number",
+						"format": "double"
+					},
+					"targetDurationMin": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"updatedAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
+					}
+				},
+				"required": [
+					"id",
+					"consoleId",
+					"mode",
+					"playerType",
+					"startTime",
+					"totalPausedMs",
+					"isActive",
+					"createdAt",
+					"updatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ConsoleSessionListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/ConsoleSessionDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ConsoleResponse": {
 				"properties": {
 					"success": {
@@ -2031,6 +2124,28 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SessionTabItemListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Consoles"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/consoles/sessions/all": {
+			"get": {
+				"operationId": "GetAllSessions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ConsoleSessionListResponse"
 								}
 							}
 						}

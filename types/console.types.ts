@@ -28,6 +28,25 @@ export interface SessionTabItemListResponse {
   data: SessionTabItemDto[];
 }
 
+export interface ConsoleSessionDto {
+  id: number;
+  consoleId: number;
+  mode: string;
+  playerType: string;
+  startTime: number;
+  pausedAt?: number | null;
+  totalPausedMs: number;
+  targetDurationMin?: number | null;
+  isActive: boolean;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface ConsoleSessionListResponse {
+  success: boolean;
+  data: ConsoleSessionDto[];
+}
+
 export interface SessionDto {
   id?: number;
   mode: "prepaid" | "postpaid";
