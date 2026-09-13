@@ -67,7 +67,10 @@ async function getConsoleWithSession(consoleId: number): Promise<ConsoleDto | nu
 }
 
 async function getAllConsolesWithSessions(): Promise<ConsoleDto[]> {
-  const allConsoles = await db.select().from(consoles).orderBy(asc(consoles.id));
+  const allConsoles = await db
+    .select()
+    .from(consoles)
+    .orderBy(asc(consoles.displayOrder), asc(consoles.id));
   const activeSessions = await db
     .select()
     .from(consoleSessions)
@@ -209,6 +212,10 @@ export class ConsoleController extends Controller {
           type: consoleData.type,
           status: consoleData.status,
           dailyTotal: consoleData.dailyTotal ?? existing.dailyTotal,
+          displayOrder:
+            consoleData.displayOrder !== undefined
+              ? consoleData.displayOrder
+              : existing.displayOrder,
           updatedAt: new Date(),
         })
         .where(eq(consoles.id, id));
@@ -219,6 +226,7 @@ export class ConsoleController extends Controller {
         type: consoleData.type,
         status: consoleData.status || "available",
         dailyTotal: consoleData.dailyTotal || 0,
+        displayOrder: consoleData.displayOrder ?? 0,
       });
     }
 
@@ -239,8 +247,12 @@ export class ConsoleController extends Controller {
 
   @Post("batch")
   public async saveAllConsoles(@Body() items: ConsoleDto[]): Promise<ConsoleListResponse> {
-    for (const item of items) {
-      await this.saveConsole(item);
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      await this.saveConsole({
+        ...item,
+        displayOrder: item.displayOrder !== undefined ? item.displayOrder : i,
+      });
     }
     const list = await getAllConsolesWithSessions();
     return { success: true, data: list };

@@ -37,6 +37,7 @@ export class MenuItemController extends Controller {
           costPrice: item.costPrice ?? existing.costPrice,
           stock: item.stock ?? existing.stock,
           lowStockThreshold: item.lowStockThreshold ?? existing.lowStockThreshold,
+          trackStock: item.trackStock !== undefined ? item.trackStock : existing.trackStock,
           updatedAt: new Date(),
         })
         .where(eq(menuItems.id, item.id));
@@ -50,6 +51,7 @@ export class MenuItemController extends Controller {
         costPrice: item.costPrice || 0,
         stock: item.stock || 0,
         lowStockThreshold: item.lowStockThreshold || 5,
+        trackStock: item.trackStock !== undefined ? item.trackStock : true,
       });
     }
 

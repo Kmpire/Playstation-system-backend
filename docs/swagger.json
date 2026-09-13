@@ -215,6 +215,9 @@
 					"lowStockThreshold": {
 						"type": "number",
 						"format": "double"
+					},
+					"trackStock": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -614,6 +617,10 @@
 						"type": "string"
 					},
 					"dailyTotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"displayOrder": {
 						"type": "number",
 						"format": "double"
 					},

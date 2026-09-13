@@ -65,6 +65,7 @@ export interface ConsoleDto {
   type: string;
   status: string;
   dailyTotal: number;
+  displayOrder?: number;
   session?: SessionDto | null;
 }
 

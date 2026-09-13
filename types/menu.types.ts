@@ -7,6 +7,7 @@ export interface MenuItemDto {
   costPrice?: number;
   stock?: number;
   lowStockThreshold?: number;
+  trackStock?: boolean;
 }
 
 export interface CategoryDto {

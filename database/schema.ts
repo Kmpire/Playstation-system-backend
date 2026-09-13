@@ -27,6 +27,7 @@ export const consoles = pgTable("consoles", {
   type: varchar("type", { length: 20 }).notNull(), // 'PS4' | 'PS5' | 'Xbox' | 'VIP'
   status: varchar("status", { length: 20 }).notNull().default("available"), // 'available' | 'occupied' | 'paused' | 'maintenance' | 'reserved'
   dailyTotal: doublePrecision("daily_total").notNull().default(0),
+  displayOrder: integer("display_order").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -92,6 +93,7 @@ export const menuItems = pgTable("menu_items", {
   costPrice: doublePrecision("cost_price").notNull().default(0),
   stock: integer("stock").notNull().default(0),
   lowStockThreshold: integer("low_stock_threshold").notNull().default(5),
+  trackStock: boolean("track_stock").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
