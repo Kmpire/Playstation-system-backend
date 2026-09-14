@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { PricingController } from "../controllers/pricing.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const pricingCtrl = new PricingController();
@@ -33,7 +34,7 @@ export const resetPricing = async (_req: Request, res: Response, next: NextFunct
 };
 
 router.get("/", getAllPricing);
-router.post("/", saveAllPricing);
-router.post("/reset", resetPricing);
+router.post("/", authorizeRole("admin"), saveAllPricing);
+router.post("/reset", authorizeRole("admin"), resetPricing);
 
 export default router;

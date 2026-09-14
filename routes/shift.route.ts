@@ -1,5 +1,6 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { ShiftController } from "../controllers/shift.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const shiftCtrl = new ShiftController();
 const router = Router();
@@ -43,6 +44,6 @@ export const resetShiftReports = async (_req: Request, res: Response, next: Next
 router.get("/", getShiftReports);
 router.post("/", addShiftReport);
 router.post("/batch", saveAllShiftReports);
-router.post("/reset", resetShiftReports);
+router.post("/reset", authorizeRole("admin"), resetShiftReports);
 
 export default router;

@@ -45,7 +45,7 @@ async function getConsoleWithSession(consoleId: number): Promise<ConsoleDto | nu
     session: {
       id: session.id,
       mode: session.mode as "prepaid" | "postpaid",
-      playerType: session.playerType as "single" | "multi",
+      playerType: session.playerType,
       startTime: session.startTime,
       pausedAt: session.pausedAt,
       totalPausedMs: session.totalPausedMs,
@@ -107,7 +107,7 @@ async function getAllConsolesWithSessions(): Promise<ConsoleDto[]> {
       session: {
         id: session.id,
         mode: session.mode as "prepaid" | "postpaid",
-        playerType: session.playerType as "single" | "multi",
+        playerType: session.playerType,
         startTime: session.startTime,
         pausedAt: session.pausedAt,
         totalPausedMs: session.totalPausedMs,

@@ -193,3 +193,33 @@ export const appSettings = pgTable("app_settings", {
   value: text("value").notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// 17. Payment Methods Table
+export const paymentMethods = pgTable("payment_methods", {
+  id: varchar("id", { length: 50 }).primaryKey(), // 'pm_cash', 'pm_ewallet', etc.
+  name: varchar("name", { length: 100 }).notNull(),
+  nameAr: varchar("name_ar", { length: 100 }).notNull(),
+  type: varchar("type", { length: 30 }).notNull().default("custom"), // 'cash' | 'ewallet' | 'card' | 'custom'
+  isCash: boolean("is_cash").notNull().default(false),
+  isProtected: boolean("is_protected").notNull().default(false), // Cash cannot be deleted
+  isActive: boolean("is_active").notNull().default(true),
+  displayOrder: integer("display_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// 18. Payments / Transactions Table
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id"),
+  consoleId: integer("console_id"),
+  orderId: varchar("order_id", { length: 50 }),
+  paymentMethodId: varchar("payment_method_id", { length: 50 }).notNull(),
+  paymentMethodName: varchar("payment_method_name", { length: 100 }).notNull(),
+  amount: doublePrecision("amount").notNull(),
+  isCash: boolean("is_cash").notNull().default(false),
+  staff: varchar("staff", { length: 100 }).notNull().default("Cashier"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+

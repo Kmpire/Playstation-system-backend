@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { Controller, Route, Tags, Get, Post, Put, Delete, Body, Path } from "tsoa";
 import { db } from "../database/db.js";
 import { menuItems, categories } from "../database/schema.js";
@@ -6,6 +6,7 @@ import { seedMenuItems, seedCategories } from "../database/seed.js";
 import type {
   MenuItemDto,
   CategoryDto,
+  DeductStockItemDto,
   MenuItemListResponse,
   MenuItemResponse,
   CategoryListResponse,
@@ -24,14 +25,17 @@ export class MenuItemController extends Controller {
 
   @Post("items")
   public async saveItem(@Body() item: MenuItemDto): Promise<MenuItemResponse> {
+    const finalNameAr = item.nameAr?.trim() || item.name?.trim() || "";
+    const finalName = item.name?.trim() || finalNameAr;
+
     const [existing] = await db.select().from(menuItems).where(eq(menuItems.id, item.id));
 
     if (existing) {
       await db
         .update(menuItems)
         .set({
-          name: item.name,
-          nameAr: item.nameAr,
+          name: finalName,
+          nameAr: finalNameAr,
           category: item.category,
           price: item.price,
           costPrice: item.costPrice ?? existing.costPrice,
@@ -44,8 +48,8 @@ export class MenuItemController extends Controller {
     } else {
       await db.insert(menuItems).values({
         id: item.id,
-        name: item.name,
-        nameAr: item.nameAr,
+        name: finalName,
+        nameAr: finalNameAr,
         category: item.category,
         price: item.price,
         costPrice: item.costPrice || 0,
@@ -64,10 +68,64 @@ export class MenuItemController extends Controller {
     return this.saveItem({ ...item, id });
   }
 
+  @Post("items/deduct-stock")
+  public async deductStock(@Body() deductions: DeductStockItemDto[]): Promise<MenuActionResponse> {
+    const rawItems = Array.isArray(deductions) ? deductions : [];
+    const valid = rawItems.filter((i) => i && i.id && i.qty > 0);
+
+    if (valid.length > 0) {
+      await Promise.all(
+        valid.map((item) =>
+          db
+            .update(menuItems)
+            .set({
+              stock: sql`GREATEST(0, ${menuItems.stock} - ${item.qty})`,
+              updatedAt: new Date(),
+            })
+            .where(and(eq(menuItems.id, item.id), eq(menuItems.trackStock, true)))
+        )
+      );
+    }
+
+    return { success: true, message: "Stock deducted successfully" };
+  }
+
   @Post("items/batch")
   public async saveAllItems(@Body() items: MenuItemDto[]): Promise<MenuItemListResponse> {
-    for (const item of items) {
-      await this.saveItem(item);
+    if (items && items.length > 0) {
+      await Promise.all(
+        items.map(async (item) => {
+          const finalNameAr = item.nameAr?.trim() || item.name?.trim() || "";
+          const finalName = item.name?.trim() || finalNameAr;
+          await db
+            .insert(menuItems)
+            .values({
+              id: item.id,
+              name: finalName,
+              nameAr: finalNameAr,
+              category: item.category,
+              price: item.price,
+              costPrice: item.costPrice || 0,
+              stock: item.stock || 0,
+              lowStockThreshold: item.lowStockThreshold || 5,
+              trackStock: item.trackStock !== undefined ? item.trackStock : true,
+            })
+            .onConflictDoUpdate({
+              target: menuItems.id,
+              set: {
+                name: finalName,
+                nameAr: finalNameAr,
+                category: item.category,
+                price: item.price,
+                costPrice: item.costPrice || 0,
+                stock: item.stock || 0,
+                lowStockThreshold: item.lowStockThreshold || 5,
+                trackStock: item.trackStock !== undefined ? item.trackStock : true,
+                updatedAt: new Date(),
+              },
+            });
+        })
+      );
     }
     const all = await db.select().from(menuItems);
     return { success: true, data: all };

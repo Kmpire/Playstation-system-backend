@@ -145,36 +145,144 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PricingTierDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"nameAr"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PricingConfigDto": {
 				"properties": {
 					"type": {
 						"type": "string"
 					},
-					"singleRate": {
-						"type": "number",
-						"format": "double"
-					},
-					"multiRate": {
-						"type": "number",
-						"format": "double"
-					}
+					"rates": {}
 				},
 				"required": [
 					"type",
-					"singleRate",
-					"multiRate"
+					"rates"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PricingListResponse": {
+			"PricingPayloadDto": {
+				"properties": {
+					"tiers": {
+						"items": {
+							"$ref": "#/components/schemas/PricingTierDto"
+						},
+						"type": "array"
+					},
+					"configs": {
+						"items": {
+							"$ref": "#/components/schemas/PricingConfigDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"tiers",
+					"configs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PricingResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/PricingPayloadDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentRecordDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"sessionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"consoleId": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"paymentMethodId": {
+						"type": "string"
+					},
+					"paymentMethodName": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					},
+					"isCash": {
+						"type": "boolean"
+					},
+					"staff": {
+						"type": "string"
+					},
+					"notes": {
+						"type": "string"
+					},
+					"createdAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
+					}
+				},
+				"required": [
+					"paymentMethodId",
+					"paymentMethodName",
+					"amount",
+					"isCash",
+					"staff"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentListResponse": {
 				"properties": {
 					"success": {
 						"type": "boolean"
 					},
 					"data": {
 						"items": {
-							"$ref": "#/components/schemas/PricingConfigDto"
+							"$ref": "#/components/schemas/PaymentRecordDto"
 						},
 						"type": "array"
 					}
@@ -183,6 +291,264 @@
 					"success",
 					"data"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentSplitDto": {
+				"properties": {
+					"paymentMethodId": {
+						"type": "string"
+					},
+					"amount": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"paymentMethodId",
+					"amount"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ProcessPaymentDto": {
+				"properties": {
+					"sessionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"consoleId": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderId": {
+						"type": "string"
+					},
+					"payments": {
+						"items": {
+							"$ref": "#/components/schemas/PaymentSplitDto"
+						},
+						"type": "array"
+					},
+					"staff": {
+						"type": "string"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"payments"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentSummaryDto": {
+				"properties": {
+					"totalRevenue": {
+						"type": "number",
+						"format": "double"
+					},
+					"cashTotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"nonCashTotal": {
+						"type": "number",
+						"format": "double"
+					},
+					"breakdown": {
+						"items": {
+							"properties": {
+								"isCash": {
+									"type": "boolean"
+								},
+								"count": {
+									"type": "number",
+									"format": "double"
+								},
+								"amount": {
+									"type": "number",
+									"format": "double"
+								},
+								"nameAr": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"paymentMethodId": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"isCash",
+								"count",
+								"amount",
+								"nameAr",
+								"name",
+								"paymentMethodId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"totalRevenue",
+					"cashTotal",
+					"nonCashTotal",
+					"breakdown"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentSummaryResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/PaymentSummaryDto"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentMethodDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"isCash": {
+						"type": "boolean"
+					},
+					"isProtected": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"displayOrder": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"nameAr",
+					"type",
+					"isCash",
+					"isProtected",
+					"isActive",
+					"displayOrder"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentMethodListResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/PaymentMethodDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PaymentMethodResponse": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"data": {
+						"$ref": "#/components/schemas/PaymentMethodDto"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"success",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreatePaymentMethodDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"isCash": {
+						"type": "boolean"
+					},
+					"displayOrder": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"name",
+					"nameAr"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdatePaymentMethodDto": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"nameAr": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"isCash": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"displayOrder": {
+						"type": "number",
+						"format": "double"
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -275,8 +641,24 @@
 					}
 				},
 				"required": [
-					"success",
-					"message"
+					"success"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"DeductStockItemDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"qty": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"qty"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -553,11 +935,7 @@
 						]
 					},
 					"playerType": {
-						"type": "string",
-						"enum": [
-							"single",
-							"multi"
-						]
+						"type": "string"
 					},
 					"startTime": {
 						"type": "number",
@@ -1424,7 +1802,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PricingListResponse"
+									"$ref": "#/components/schemas/PricingResponse"
 								}
 							}
 						}
@@ -1444,7 +1822,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PricingListResponse"
+									"$ref": "#/components/schemas/PricingResponse"
 								}
 							}
 						}
@@ -1460,10 +1838,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"items": {
-									"$ref": "#/components/schemas/PricingConfigDto"
-								},
-								"type": "array"
+								"$ref": "#/components/schemas/PricingPayloadDto"
 							}
 						}
 					}
@@ -1479,7 +1854,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PricingListResponse"
+									"$ref": "#/components/schemas/PricingResponse"
 								}
 							}
 						}
@@ -1490,6 +1865,278 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/v1/payments": {
+			"get": {
+				"operationId": "GetPayments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Payments"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "sessionId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "consoleId",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "orderId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isCash",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "ProcessPayments",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Payments"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ProcessPaymentDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/payments/summary": {
+			"get": {
+				"operationId": "GetPaymentsSummary",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentSummaryResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Payments"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/payment-methods": {
+			"get": {
+				"operationId": "GetAllPaymentMethods",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentMethodListResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethods"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreatePaymentMethod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentMethodResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethods"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreatePaymentMethodDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/payment-methods/{id}": {
+			"get": {
+				"operationId": "GetPaymentMethodById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentMethodResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethods"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdatePaymentMethod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PaymentMethodResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethods"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdatePaymentMethodDto"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeletePaymentMethod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"message",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"PaymentMethods"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/v1/menu/items": {
@@ -1612,6 +2259,41 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/menu/items/deduct-stock": {
+			"post": {
+				"operationId": "DeductStock",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MenuActionResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Menu Items"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/DeductStockItemDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/menu/items/batch": {

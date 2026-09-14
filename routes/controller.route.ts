@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { GamepadController } from "../controllers/controller.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const padCtrl = new GamepadController();
@@ -90,7 +91,7 @@ export const deleteMaintenanceRecord = async (req: Request, res: Response, next:
 router.get("/", getAllControllers);
 router.post("/", saveController);
 router.post("/batch", saveAllControllers);
-router.post("/reset", resetControllers);
+router.post("/reset", authorizeRole("admin"), resetControllers);
 router.delete("/:id", deleteController);
 
 // Maintenance

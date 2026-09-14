@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { MenuItemController, CategoryController } from "../controllers/menu.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const itemCtrl = new MenuItemController();
@@ -27,6 +28,15 @@ export const saveItem = async (req: Request, res: Response, next: NextFunction) 
 export const saveAllItems = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await itemCtrl.saveAllItems(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deductStock = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await itemCtrl.deductStock(req.body);
     res.json(result);
   } catch (err) {
     next(err);
@@ -101,14 +111,15 @@ router.get("/items", getItems);
 router.post("/items", saveItem);
 router.put("/items/:id", saveItem);
 router.post("/items/batch", saveAllItems);
-router.post("/items/reset", resetItems);
+router.post("/items/deduct-stock", deductStock);
+router.post("/items/reset", authorizeRole("admin"), resetItems);
 router.delete("/items/:id", deleteItem);
 
 // Categories
 router.get("/categories", getCategories);
 router.post("/categories", saveCategory);
 router.post("/categories/batch", saveAllCategories);
-router.post("/categories/reset", resetCategories);
+router.post("/categories/reset", authorizeRole("admin"), resetCategories);
 router.delete("/categories/:id", deleteCategory);
 
 export default router;

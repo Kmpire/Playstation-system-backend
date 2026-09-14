@@ -1,10 +1,21 @@
-export interface PricingConfigDto {
-  type: string;
-  singleRate: number;
-  multiRate: number;
+export interface PricingTierDto {
+  id: string;
+  name: string;
+  nameAr: string;
 }
 
-export interface PricingListResponse {
-  success: boolean;
-  data: PricingConfigDto[];
+export interface PricingConfigDto {
+  type: string;
+  rates: any;
 }
+
+export interface PricingPayloadDto {
+  tiers: PricingTierDto[];
+  configs: PricingConfigDto[];
+}
+
+export interface PricingResponse {
+  success: boolean;
+  data: PricingPayloadDto;
+}
+

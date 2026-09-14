@@ -50,7 +50,7 @@ export interface ConsoleSessionListResponse {
 export interface SessionDto {
   id?: number;
   mode: "prepaid" | "postpaid";
-  playerType: "single" | "multi";
+  playerType: string;
   startTime: number;
   pausedAt?: number | null;
   totalPausedMs: number;

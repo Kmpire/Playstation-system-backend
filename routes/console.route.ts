@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { ConsoleController } from "../controllers/console.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const consoleCtrl = new ConsoleController();
@@ -80,11 +81,11 @@ export const resetConsoles = async (_req: Request, res: Response, next: NextFunc
 router.get("/", getAllConsoles);
 router.get("/tabs/all", getAllTabOrders);
 router.get("/sessions/all", getAllSessions);
-router.post("/reset", resetConsoles);
+router.post("/reset", authorizeRole("admin"), resetConsoles);
 router.post("/batch", saveAllConsoles);
 router.get("/:id", getConsoleById);
 router.post("/", saveConsole);
 router.put("/:id", saveConsole);
-router.delete("/:id", deleteConsole);
+router.delete("/:id", authorizeRole("admin"), deleteConsole);
 
 export default router;

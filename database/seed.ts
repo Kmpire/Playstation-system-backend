@@ -17,6 +17,7 @@ import {
   auditEntries,
   companyInfo,
   companySocials,
+  paymentMethods,
 } from "./schema.js";
 
 const now = Date.now();
@@ -348,6 +349,34 @@ export async function autoSeedDatabase() {
           handle: soc.handle,
         });
       }
+    }
+
+    // 12. Payment methods (ensure Cash exists and is protected)
+    const [{ value: pmCount }] = await db.select({ value: count() }).from(paymentMethods);
+    if (pmCount === 0) {
+      console.log("🌱 Seeding default payment methods (Cash & E-Wallet)...");
+      await db.insert(paymentMethods).values([
+        {
+          id: "pm_cash",
+          name: "Cash",
+          nameAr: "كاش / نقدي",
+          type: "cash",
+          isCash: true,
+          isProtected: true, // Cannot be deleted
+          isActive: true,
+          displayOrder: 1,
+        },
+        {
+          id: "pm_ewallet",
+          name: "E-Wallet",
+          nameAr: "محفظة إلكترونية",
+          type: "ewallet",
+          isCash: false,
+          isProtected: false,
+          isActive: true,
+          displayOrder: 2,
+        },
+      ]);
     }
 
     console.log("✅ Database auto-seed check complete.");

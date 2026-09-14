@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { AuthController } from "../controllers/auth.controller.js";
-import { authenticateToken } from "../middlewares/auth.middleware.js";
+import { authenticateToken, authorizeRole } from "../middlewares/auth.middleware.js";
 import { db } from "../database/db.js";
 import { users } from "../database/schema.js";
 import { eq } from "drizzle-orm";
@@ -72,6 +72,25 @@ export const resetAccounts = async (_req: Request, res: Response, next: NextFunc
 
 export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const caller = req.user;
+    if (!caller) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+      return;
+    }
+
+    const { username, currentPassword } = req.body;
+    // Users can only change their own password unless they are an admin
+    if (caller.role !== "admin" && caller.username.toLowerCase() !== username?.trim().toLowerCase()) {
+      res.status(403).json({ success: false, message: "Forbidden: You can only change your own password" });
+      return;
+    }
+
+    // Non-admins must provide current password
+    if (caller.role !== "admin" && !currentPassword) {
+      res.status(400).json({ success: false, message: "Current password is required" });
+      return;
+    }
+
     const result = await authCtrl.changePassword(req.body);
     res.json(result);
   } catch (err) {
@@ -80,10 +99,10 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
 };
 
 router.post("/login", login);
-router.post("/change-password", changePassword);
+router.post("/change-password", authenticateToken, changePassword);
 router.get("/me", authenticateToken, getCurrentUser);
-router.get("/accounts", getAccounts);
-router.post("/accounts", saveAccounts);
-router.post("/accounts/reset", resetAccounts);
+router.get("/accounts", authenticateToken, getAccounts);
+router.post("/accounts", authenticateToken, authorizeRole("admin"), saveAccounts);
+router.post("/accounts/reset", authenticateToken, authorizeRole("admin"), resetAccounts);
 
 export default router;

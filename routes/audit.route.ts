@@ -1,6 +1,7 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
 import { AuditController } from "../controllers/audit.controller.js";
+import { authorizeRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const auditCtrl = new AuditController();
@@ -44,6 +45,6 @@ export const resetLogs = async (_req: Request, res: Response, next: NextFunction
 router.get("/", getLogs);
 router.post("/", addLog);
 router.post("/batch", saveAllLogs);
-router.post("/reset", resetLogs);
+router.post("/reset", authorizeRole("admin"), resetLogs);
 
 export default router;

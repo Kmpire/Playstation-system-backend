@@ -17,27 +17,46 @@ import type {
   CurrentUserResponse,
 } from "../types/auth.types.js";
 
+function createHttpError(statusCode: number, message: string) {
+  const err = new Error(message);
+  (err as any).statusCode = statusCode;
+  return err;
+}
+
 @Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
   @Post("login")
   public async login(@Body() body: LoginRequestDto): Promise<LoginResponseDto> {
-    const { username, password } = body;
-    if (!username || !password) {
+    const rawUsername = body.username?.trim();
+    const password = body.password;
+    if (!rawUsername || !password) {
       this.setStatus(400);
-      throw new Error("Username and password are required");
+      throw createHttpError(400, "اسم المستخدم وكلمة المرور مطلوبان / Username and password are required");
     }
 
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    // Match case-insensitively by username OR display name
+    const allUsers = await db.select().from(users);
+    const user = allUsers.find(
+      (u) =>
+        u.username.toLowerCase() === rawUsername.toLowerCase() ||
+        (u.name && u.name.toLowerCase() === rawUsername.toLowerCase()),
+    );
+
     if (!user) {
       this.setStatus(401);
-      throw new Error("Invalid credentials");
+      throw createHttpError(401, "اسم المستخدم أو كلمة المرور غير صحيحة / Invalid credentials");
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       this.setStatus(401);
-      throw new Error("Invalid credentials");
+      throw createHttpError(401, "اسم المستخدم أو كلمة المرور غير صحيحة / Invalid credentials");
+    }
+
+    const signOptions: jwt.SignOptions = {};
+    if (JWT_EXPIRES_IN && JWT_EXPIRES_IN !== "never" && JWT_EXPIRES_IN !== "none") {
+      signOptions.expiresIn = JWT_EXPIRES_IN as any;
     }
 
     const token = jwt.sign(
@@ -48,7 +67,7 @@ export class AuthController extends Controller {
         role: user.role,
       },
       JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN as any }
+      Object.keys(signOptions).length > 0 ? signOptions : undefined,
     );
 
     return {

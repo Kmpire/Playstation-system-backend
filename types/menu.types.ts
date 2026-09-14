@@ -36,7 +36,12 @@ export interface CategoryResponse {
   data: CategoryDto;
 }
 
+export interface DeductStockItemDto {
+  id: string;
+  qty: number;
+}
+
 export interface MenuActionResponse {
   success: boolean;
-  message: string;
+  message?: string;
 }
